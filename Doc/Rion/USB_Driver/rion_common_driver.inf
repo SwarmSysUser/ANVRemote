@@ -1,0 +1,124 @@
+;/*++
+;
+;Copyright (c) RION co., ltd. All rights Reserved
+;
+;Module Name:
+;
+;    rion_common_driver.inf
+;
+;Abstract:
+;    RION VA-12  USB to RS232C Converter Driver for Windows 2000/Xp
+;    RION NA-28  USB to RS232C Converter Driver for Windows 2000/Xp
+;    RION KC-52  USB to RS232C Converter Driver for Windows 2000/Xp
+;    RION KC-30  USB to RS232C Converter Driver for Windows 2000/Xp
+;    RION NL-42  USB to RS232C Converter Driver for Windows 2000/Xp
+;
+; PID List:
+;	PID_0001 ... NL-22 Vender Specific
+;	PID_0002 ... SA-78 Vender Specific
+;	PID_0003 ... US-30 ?
+;	PID_0004 ... NA-28 Mass Storage
+;	PID_0005 ... NA-28 Virtual COM Port + Mass Storage (Composite)
+;	PID_0006 ... NA-37 ?
+;	PID_0007 ... DA-40 Virtual COM Port
+;	PID_0008 ... UV-22 Virtual COM Port
+;	PID_000A ... VA-12 Mass Storage
+;	PID_000B ... VA-12 Virtual COM Port + Mass Storage (Composite)
+;	PID_000C ... KC-30 Virtual COM Port
+;	PID_000D ... KC-52 Virtual COM Port + Mass Storage (Composite)
+;	PID_000E ... NL-42 Mass Storage
+;	PID_000F ... NL-42 Virtual COM Port + Mass Storage (Composite)
+;	PID_0010 ... NL-42 ?
+;	PID_0011 ... NL-42 ?
+;
+;
+;--*/
+
+[Version]
+Signature="$Windows NT$"
+Class=Ports
+ClassGuid = {4d36e978-e325-11ce-bfc1-08002be10318}
+Provider=%MfgName%
+DriverVer=01/13/2010,2.0.2.10
+
+[SourceDisksNames]
+1=%disk1.desc%
+
+[SourceDisksFiles]
+RIONUSBD.sys=1
+RIONVCOM.sys=1
+
+[Manufacturer]
+%MfgName%=SECTION_0
+
+[SECTION_0]
+%USB\VID_0EA3&PID_000B&MI_00.DeviceDesc%=RIONUSBD_V2.Dev, USB\VID_0EA3&PID_000B&MI_00
+%USB\VID_0EA3&PID_0005&MI_00.DeviceDesc%=RIONUSBD_V2.Dev, USB\VID_0EA3&PID_0005&MI_00
+%USB\VID_0EA3&PID_000D&MI_00.DeviceDesc%=RIONUSBD_V2.Dev, USB\VID_0EA3&PID_000D&MI_00
+%USB\VID_0EA3&PID_000C.DeviceDesc%=RIONUSBD_V2.Dev, USB\VID_0EA3&PID_000C
+%USB\VID_0EA3&PID_000F&MI_00.DeviceDesc%=RIONUSBD_V2.Dev, USB\VID_0EA3&PID_000F&MI_00
+
+[DestinationDirs]
+RIONUSBD_COPYFILES = 10,System32\Drivers
+
+
+[RIONUSBD_V2.Dev.NT]
+CopyFiles=RIONUSBD_COPYFILES
+AddReg=RIONUSBD.AddReg
+
+[RIONUSBD.AddReg]
+HKR,,PortSubClass,1,01
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+[RIONUSBD_COPYFILES]
+RIONUSBD.sys
+RIONVCOM.sys
+
+[RIONUSBD_V2.Dev.NT.HW]
+AddReg=RIONUSBD_Common.Dev.NT.HW.AddReg, RIONUSBD_V2.Dev.NT.HW.AddReg
+
+
+[RIONUSBD_Common.Dev.NT.HW.AddReg]
+HKR,,"UpperFilters",0x00010000,"RIONVCOM_FILTER"
+HKR,,"EndPointCaps",0x00010001,3
+HKR,,"DebugLevel",0x00010001,3
+HKR,,"RawDump",0x00010001,0
+[RIONUSBD_V2.Dev.NT.HW.AddReg]
+HKR,,"CtlPollPeriod",0x00010001,0xffffffff
+HKR,,"RxPollPeriod",0x00010001,0
+HKR,,"TxKickThreshold",0x00010001,64
+
+[RIONUSBD_V2.Dev.NT.Services]
+Addservice = RIONUSBD,2,RIONUSBD.AddService
+Addservice = RIONVCOM_FILTER,,RIONVCOM_FILTER.AddService
+
+
+[RIONUSBD.AddService]
+DisplayName	= %RIONVCOM_USB.SvcDesc%
+ServiceType	= 1
+StartType	= 3
+ErrorControl	= 1
+ServiceBinary	= %12%\RIONUSBD.sys
+LoadOrderGroup	= Base
+
+[RIONVCOM_FILTER.AddService]
+DisplayName     = %RIONVCOM_FILTER.SvcDesc%
+ServiceType	= 1
+StartType	= 3
+ErrorControl	= 1
+ServiceBinary	= %12%\RIONVCOM.sys
+LoadOrderGroup	= PNP Filter
+
+[Strings]
+MfgName="RION Co.,Ltd."
+disk1.desc="RION USB to RS232C Converter virtual COM Port driver install disk"
+RIONVCOM_USB.SvcDesc="RION USB driver"
+RIONVCOM_FILTER.SvcDesc="Virtual COM Port filter driver for RION Measuring Instrument"
+
+USB\VID_0EA3&PID_000B&MI_00.DeviceDesc="RION USB to RS232C Converter Virtual COM Port"
+USB\VID_0EA3&PID_0005&MI_00.DeviceDesc="RION USB to RS232C Converter Virtual COM Port"
+USB\VID_0EA3&PID_000D&MI_00.DeviceDesc="RION USB to RS232C Converter Virtual COM Port"
+USB\VID_0EA3&PID_000C.DeviceDesc      ="RION USB to RS232C Converter Virtual COM Port"
+USB\VID_0EA3&PID_000F&MI_00.DeviceDesc="RION USB to RS232C Converter Virtual COM Port"
+
+

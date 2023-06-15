@@ -1,0 +1,36 @@
+(ExpressProject ""
+  (ProjectVersion "19981106")
+  (ProjectType "PCB")
+  (Folder "Design Resources"
+    (Folder "Library")
+    (File ".\anvspl.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x")
+    (NoModify))
+  (Folder "Outputs")
+  (Folder "Referenced Projects")
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources" "c:\projects\anvremote\hardware\anvspl.dsn")
+      (Path "Design Resources" "c:\projects\anvremote\hardware\anvspl.dsn"
+         "ANVSPL")
+      (Select "Design Resources" "c:\projects\anvremote\hardware\anvspl.dsn"
+         "ANVSPL" "ANVSPL.SCH"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -1 -1 0 200 0 593"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -1 -1 203 2056 9 906")
+        (Scroll "0 839")
+        (Zoom "122")
+        (Occurrence "/"))
+      (Path "C:\PROJECTS\ANVREMOTE\HARDWARE\ANVSPL.DSN")
+      (Schematic "ANVSPL")
+      (Page "ANVSPL.SCH"))))

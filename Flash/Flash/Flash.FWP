@@ -1,0 +1,109 @@
+[HIMDBVersion]
+2.0
+[DATABASE_VERSION]
+"2.5" 
+[PROJECT_DETAILS]
+"Flash" "C:\Projects\ANVRemote\Flash\Flash" "C:\Projects\ANVRemote\Flash\Flash\Flash.FWP" "All Flash Devices" "" "FDT Project Generator" 
+[INFORMATION]
+"No project information available" 
+[TOOL_CHAIN]
+"" "" 
+[CONFIGURATIONS]
+"Default" "C:\Projects\ANVRemote\Flash\Flash\Default" 
+[BUILD_PHASES]
+[DEFINITION_PARSERS]
+[TOOL_ENVIRONMENT]
+[EXTENSIONS]
+"FDT DDI Files" "DDI" 
+"S-Record Files" "MOT" 
+"S2 Files" "S2" 
+"FDT Image Files" "FPR" 
+"FDT Binary Files" "CDE" 
+"Binary Files" "BIN" 
+"IAR A20 Files" "A20" 
+"IAR A37 Files" "A37" 
+"REC Files" "REC" 
+[FILE_GROUPS]
+"FDT DDI Files" "BIN" "EDITOR" "" 
+"S-Record Files" "BIN" "UNKNOWN" "" 
+"S2 Files" "BIN" "UNKNOWN" "" 
+"FDT Image Files" "BIN" "UNKNOWN" "" 
+"FDT Binary Files" "BIN" "UNKNOWN" "" 
+"Binary Files" "BIN" "UNKNOWN" "" 
+"IAR A20 Files" "BIN" "UNKNOWN" "" 
+"IAR A37 Files" "BIN" "UNKNOWN" "" 
+"REC Files" "BIN" "UNKNOWN" "" 
+[ASSOCIATED_APPLICATIONS]
+[TOOLCHAIN_PHASE]
+[UTILITY_PHASE]
+[CUSTOM_PHASES]
+[CUSTOM_PHASE_INPUT_GROUP]
+[BUILD_ORDER]
+[BUILD_PHASE_DETAILS]
+[SCRAP]
+"Project Generator Setup File" "" 
+[MAPPINGS]
+[PROJECT_FILES]
+"C:\Projects\ANVRemote\ANVRemote\NA28Release\NRH-NA28.mot" "User" "S-Record Files" 0 
+[FOLDER]
+"S-Record Files" "S-Record Files" 
+[GENERAL_DATA_PROJECT]
+"FDT_BaseDevice" "3672" 
+"FDT_Comments" "" 
+"FDT_DoSecurityProtection" "Prompt" 
+"FDT_Interface" "Direct Connection" 
+"FDT_UseDefaultBaudRate" "TRUE" 
+"FDT_DoSecurityProtectionLevel" "00" 
+"FDT_ResetPinOutputs" "FFFFFFFF" 
+"FDT_ConnectionResetSuppression" "FFFFFFFF" 
+"FDT_ResetOnDisconnect" "No" 
+"FDT_McuId" "ffff" 
+"FDT_SerNumMemArea" "" 
+"FDT_ResetPinSettings" "FFFFFFFF" 
+"FDT_SerNumDllLocation" "" 
+"FDT_KernelPath" "C:\Program Files\Renesas\FDT4.00\kernels\ProtB\3672\Renesas\1_0_00\" 
+"FDT_KernelResident" "FALSE" 
+"FDT_UPMPinSettings" "FFFFFFFF" 
+"FDT_InternalClock" "FALSE" 
+"FDT_CKM" "1" 
+"FDT_ClockMode" "0" 
+"FDT_UserPinOutputs" "FFFFFFFF" 
+"FDT_UserPinSettings" "FFFFFFFF" 
+"FDT_UseInternalKernel" "TRUE" 
+"FDT_SerNumConfigString" "" 
+"FDT_Port" "COM1" 
+"FDT_BlockLockConnect" "1" 
+"FDT_BlockLockDisconnect" "1" 
+"FDT_SerNumEnabled" "FALSE" 
+"FDT_MessageLevel" "1" 
+"FDT_CKP" "-127" 
+"FDT_UserBootArea" "FALSE" 
+"FDT_BootMode" "TRUE" 
+"FDT_BaudRate" "19200" 
+"FDT_PinOutputs" "FFFFFFFF" 
+"FDT_Protection" "0" 
+"FDT_Protocol" "B" 
+"FDT_PinSettings" "FFFFFFFF" 
+"FDT_SerNumDllFunction" "" 
+"FDT_ClockSync" "00000000" 
+"FDT_ReinterrogateGenericDevice" "No" 
+"FDT_Device" "H8/3672F" 
+"FDT_AutoConnect" "0" 
+"FDT_Frequency" "368.6400" 
+"FDT_DoReadbackVerification" "No" 
+[ON_DEMAND_COMPONENTS_LOADED]
+[SYNC_SESSION_NAMES]
+[SESSIONS]
+"Default" "C:\Projects\ANVRemote\Flash\Flash\Default.hsf" 0 
+[GENERAL_DATA_SESSION_Default]
+[OPTIONS_Default]
+"" 0 
+[SESSION_DATA_CONFIGURATION_SESSION_Default_Default]
+"MEMORY_MAPPING_OPTIONS" "" 
+[EXT_DEBUGGER_INFO]
+0 "" "" "" "" 
+[EXCLUDED_FILES_Default]
+[LINKAGE_ORDER_Default]
+[GENERAL_DATA_CONFIGURATION_Default]
+[GENERAL_DATA_CONFIGURATION_SESSION_Default_Default]
+[END]
