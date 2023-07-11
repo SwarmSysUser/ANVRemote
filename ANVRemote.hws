@@ -3,12 +3,12 @@
 [DATABASE_VERSION]
 "10.0" 
 [WORKSPACE_DETAILS]
-"ANVRemote" "E:\Projects\ANVRemote" "E:\Projects\ANVRemote\ANVRemote.hws" "H8S,H8/300" "Hitachi H8S,H8/300 Standard" 
+"ANVRemote" "C:\Projects\ANVRemote" "C:\Projects\ANVRemote\ANVRemote.hws" "H8S,H8/300" "Hitachi H8S,H8/300 Standard" 
 [SHARED_WORKSPACE_CONTROL_STATUS]
 "" "" "" 
 "" "" "" 
 [PROJECTS]
-"ANVRemote" "E:\Projects\ANVRemote\ANVRemote" "E:\Projects\ANVRemote\ANVRemote\ANVRemote.hwp" 0 
+"ANVRemote" "C:\Projects\ANVRemote\ANVRemote" "C:\Projects\ANVRemote\ANVRemote\ANVRemote.hwp" 0 
 [INFORMATION]
 "No workspace information available" 
 [SCRAP]
