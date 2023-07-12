@@ -30,6 +30,8 @@
  *>>>>>>>>>>>>>>>>>>>>>>>>> System Includes <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*
  ****************************************************************************/
 
+#include <machine.h>
+
 /****************************************************************************
  *>>>>>>>>>>>>>>>>>>>>>>>>>> User Includes <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*
  ****************************************************************************/
@@ -356,7 +358,7 @@ void main(void)
                 StartTimer(&gRecordPeriodTimer,
                            (PCFNTMR)SetStopFlag,
                            PNULL,
-                           9931,//TODO: ANVR_RECORD_PERIOD_IN_MS,
+                           ANVR_RECORD_PERIOD_IN_MS,
                            SINGLE_SHOT_TIMER);
 #endif
                gbfTimerStarted = TRUE;
@@ -502,12 +504,14 @@ static void SetPostTriggerDoneFlag(void)
 
 static void StartCancelTimer(DWORD dwTimeOut)
 {
+    set_imask_ccr(TRUE);
     StartTimer(&gCanceTransmission,
                (PCFNTMR)SetCancelFlag,
                PNULL,
                dwTimeOut,
                SINGLE_SHOT_TIMER);
     gbfCancel = FALSE;
+    set_imask_ccr(FALSE);
 }
 
 /*****************************************************************************
