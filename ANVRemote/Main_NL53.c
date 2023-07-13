@@ -1,5 +1,5 @@
 /****************************************************************************
- * File:   Main_NL52.c
+ * File:   Main_NL53.c
  * Author: Adam Fullerton
  * Design: Adam Fullerton
  * Date:   07/06/2011
@@ -15,7 +15,7 @@
  *
  * Description : Main entry point for the ANV remote firmware
  *
- * (C) ARDWare ltd. 2004-2011. All Rights Reserved.
+ * (C) ARDWare ltd. 2004-2023. All Rights Reserved.
  * Rosedene, The Dene, Hindon, Salisbury, Wiltshire SP3 6EE.
  * 
  * The copyright to the computer program(s) herein is the property of
@@ -44,8 +44,8 @@
  *>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Defines <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*
  ****************************************************************************/
 
-/* Define the default post trigger time */
-#define ANV_POST_TRIGGER_TIME       (27990)
+/* Define the default post trigger time - Moved to configuration setting */
+//#define ANV_POST_TRIGGER_TIME       (27990)
 
 /****************************************************************************
  *>>>>>>>>>>>>>>>>>>>>>>>>>> Constant Macros <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*

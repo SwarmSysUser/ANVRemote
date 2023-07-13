@@ -49,8 +49,7 @@
 [WINDOW_POSITION_STATE_DATA_VD3]
 [WINDOW_POSITION_STATE_DATA_VD4]
 [WINDOW_Z_ORDER]
-"C:\Projects\ANVRemote\ANVRemote\Main_NL52.c" 
-"C:\Projects\ANVRemote\ANVRemote\hwSCI3_NL52.c" 
+"C:\Projects\ANVRemote\ANVRemote\Main_NL53.c" 
 [STATUSBAR_STATEINFO_VD1]
 "MasterShowState" 1 
 "ApplicationShowState" 1 
@@ -92,6 +91,6 @@
 [DEFAULT_DEBUG_FORMAT]
 "" 
 [FLASH_DETAILS]
-"368.640015" 1 -127 "B" 0 "COM1" 19200 1 "H8/3672F" 1 0 0 0 1 0 0 "C:\Program Files\Renesas\FDT3.07\Kernels\ProtB\3672\Renesas\1_0_00\" "" "" "" "" 
+"368.640015" 1 -127 "B" 19200 "COM1" 19200 1 "H8/3672F" 1 0 0 0 1 0 0 "C:\Program Files\Renesas\FDT3.07\Kernels\ProtB\3672\Renesas\1_0_00\" "" "" "" "" 
 [BREAKPOINTS]
 [END]

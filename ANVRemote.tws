@@ -5,20 +5,13 @@
 [CURRENT_PROJECT]
 "ANVRemote" 
 [GENERAL_DATA]
+"BuildMultipleSettings" "ANVRemote|NL53IT|ANVRemote|NL53R15|ANVRemote|NL53R30|ANVRemote|NL53R5|ANVRemote|NL53R20|ANVRemote|NL53R10||" 
 "EDITOR_WINDOWS_MAXIMISED" "0" 
 [BREAKPOINTS]
 [OPEN_WORKSPACE_FILES]
-"E:\Projects\ANVRemote\ANVRemote\anvremote.h" 
-"E:\Projects\ANVRemote\ANVRemote\CStartUp.c" 
-"E:\Projects\ANVRemote\ANVRemote\hwSCI3.h" 
-"E:\Projects\ANVRemote\ANVRemote\hwSCI3_NL52.c" 
-"E:\Projects\ANVRemote\ANVRemote\Main_NL52.c" 
+"C:\Projects\ANVRemote\ANVRemote\Main_NL53.c" 
 [WORKSPACE_FILE_STATES]
-"E:\Projects\ANVRemote\ANVRemote\CStartUp.c" 0 0 552 641 0 2 
-"E:\Projects\ANVRemote\ANVRemote\Main_NL52.c" 0 0 663 831 0 3 
-"E:\Projects\ANVRemote\ANVRemote\anvremote.h" 665 -2 585 833 0 1 
-"E:\Projects\ANVRemote\ANVRemote\hwSCI3.h" 664 0 586 855 0 0 
-"E:\Projects\ANVRemote\ANVRemote\hwSCI3_NL52.c" 0 0 663 831 0 4 
+"C:\Projects\ANVRemote\ANVRemote\Main_NL53.c" 0 0 858 734 0 0 
 [LOADED_PROJECTS]
 "ANVRemote" 
 [END]
