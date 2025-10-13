@@ -130,6 +130,16 @@ const BYTE gcpbyEchoOn[] =
     "echo, on\r\n"
 };
 
+const BYTE gcpbLCDOn[] = 
+{
+    "lcd, on\r\n"
+};
+
+const BYTE gcpbBacklightOn[] = 
+{
+    "backlight, on\r\n"
+};
+
 /****************************************************************************
  *>>>>>>>>>>>>>>>>>>>>>>>>>> Enumerated Types <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*
  ****************************************************************************/
@@ -195,7 +205,7 @@ const struct _VERSION
 
 } gVersion = {
 
-    "NL-53 Remote V1.0 for H8/3672",
+    "NL-53 Remote V1.1 for H8/3672",
     __DATE__,
     __TIME__
 };
@@ -246,6 +256,8 @@ TIMER       gRecordPeriodTimer;
 TIMER       gMarkerOffTimer;
                                     /* Timer for post trigger timer */
 TIMER       gPostTriggerTimer;
+                                    /* Timer for mark on / off */
+TIMER       gSleepTimer;
                                     /* The memory map required by the matrix
                                        scanning function. Although there is
                                        no key matrix on the product the 
@@ -268,6 +280,8 @@ BOOL        gbfMarkerOff = FALSE;
 BOOL        gbfPostTriggerDone = FALSE;
                                     /* Flag set TRUE when the post trigger timer is running */
 BOOL        gbfPostTriggerTime = FALSE;
+                                    /* Flag set TRUE when marker on / off timer is complete */
+BOOL        gbfMarkerSleepTimer = FALSE;
 
 /*
  * The global data associated with control of the LEDs
@@ -334,25 +348,20 @@ void main(void)
                                     /* Stop the post trigger time if running */
             StopTimer(&gPostTriggerTimer);
             gbfPostTriggerTime = FALSE;
-                                    /* Set the LED to show that the start
-                                       character will be sent */
+                                    /* Set the LEDs to alternate flashing */
+            ANVR_START_LED_ON;
             SetLedState(&gStartLED,
                         &GC_FLASH_SENDING,
                         ANVR_LED_START_MASK,
                         4UL);
+            ANVR_STOP_LED_OFF;
+            SetLedState(&gStopLED,
+                        &GC_FLASH_SENDING,
+                        ANVR_LED_STOP_MASK,
+                        4UL);
                                     /* Attempt to send the start command */
             if (StartManualRecord())
             {
-                                    /* Stop activity on the stop LED */
-                SetLedState(&gStopLED,
-                            &GC_ALWAYS_OFF,
-                            ANVR_LED_STOP_MASK,
-                            0UL);
-                                    /* Show the recording state forever */
-                SetLedState(&gStartLED,
-                            &GC_FLASH_RUNNING,
-                            ANVR_LED_START_MASK,
-                            (DWORD)-1L);
                                     /* Start the record period timer */
 #ifdef ANVR_RECORD_PERIOD_IN_MS
                 StartTimer(&gRecordPeriodTimer,
@@ -493,6 +502,21 @@ static void SetPostTriggerDoneFlag(void)
 }
 
 /*****************************************************************************
+ * Description: Timer call-back function to set the sleep flag
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: N/A
+ *
+ *****************************************************************************/
+
+static void SetSleepFlag(void)
+{
+    gbfMarkerSleepTimer = TRUE;
+}
+
+/*****************************************************************************
  * Description: Function to start a timer to cancel the transmission
  *
  * Parameters:
@@ -630,7 +654,7 @@ static BOOL StartManualRecord_Try(void)
 {
     /* This is so the commands and responses can be monitored */
     SCI3_SendCommandCheckResponse(gcpbyEchoOn, sizeof(gcpbyEchoOn), "R+0000");
-    /* Check to see if the machine is storing */
+    /* Check to see if the machine is measuring */
     if (SCI3_SendCommandCheckResponse(gcpbyStoreCheckMessage,
                                       sizeof(gcpbyStoreCheckMessage),
                                       "Start"))
@@ -640,6 +664,14 @@ static BOOL StartManualRecord_Try(void)
                                           sizeof(gcpbyRecCheckMessage),
                                           "Stop"))
         {
+            /* Turn the LCD on */
+            SCI3_SendCommandCheckResponse(gcpbLCDOn,
+                                          sizeof(gcpbLCDOn),
+                                          "R+0000");
+            /* Turn the backlight on */
+            SCI3_SendCommandCheckResponse(gcpbLCDOn,
+                                          sizeof(gcpbLCDOn),
+                                          "R+0000");
             /* Start the recording */
             if (SendPauseKeyPress())
             {
@@ -741,7 +773,29 @@ static BOOL StartManualRecord(void)
     {
         if (StartManualRecord_Try())
         {
+            gbfMarkerSleepTimer = FALSE;
             MarkerOn();
+                                    /* Stop activity on the stop LED */
+            SetLedState(&gStopLED,
+                        &GC_ALWAYS_OFF,
+                        ANVR_LED_STOP_MASK,
+                        0UL);
+                                    /* Show the recording state forever */
+            SetLedState(&gStartLED,
+                        &GC_FLASH_RUNNING,
+                        ANVR_LED_START_MASK,
+                        (DWORD)-1L);
+                                    /* Sleep 1 second */
+            StartTimer(&gPostTriggerTimer,
+                       (PCFNTMR)SetSleepFlag,
+                       PNULL,
+                       1000UL,
+                       SINGLE_SHOT_TIMER);
+            while (FALSE == gbfMarkerSleepTimer)
+            {
+                /* Wait here */
+            }
+            MarkerOff();
             return TRUE;
         }
     }
