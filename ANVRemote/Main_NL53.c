@@ -109,6 +109,16 @@ const BYTE gcpbyMarker1Off[] =
     "marker 1, off\r\n"
 };
 
+const BYTE gcpbyMarker2On[] =
+{
+    "marker 2, on\r\n"
+};
+
+const BYTE gcpbyMarker2Off[] =
+{
+    "marker 2, off\r\n"
+};
+
 const BYTE gcpbyPauseKeyPress[] =
 {
     /* Dollar a special sign to make TX wait */
@@ -221,12 +231,21 @@ static void SetLedState(PLEDINFO  pLedInfo,
                         CPLEDCTL  pLedCtl,
                         BYTE      byLED,
                         DWORD     dwRepeat);
+static void SetLedStateAlt(PLEDINFO  pLedInfo,
+                           CPLEDCTL  pLedCtl,
+                           BYTE      byLED,
+                           DWORD     dwRepeat);
 static void SetLedStateOn(PLEDINFO pLedInfo);
 static BOOL StartManualRecord(void);
+static BOOL RecordIsRuning(void);
+static BOOL TurnLCDOn(void);
 static BOOL StopManualRecord(void);
 static void StartPostTriggerTimer(DWORD dwTimeOut);
-static void MarkerOn(void);
-static void MarkerOff(void);
+static BOOL Marker1On(void);
+static void Marker1Off(void);
+static BOOL Marker2On(void);
+static void Marker2Off(void);
+static void DropMarker2(void);
 static int memcmp(const void *pvMem1, const void *pvMem2, size_t stLength);
 static char *strstr(const char *pszString, const char *pszSubString);
 static BOOL SCI3_SendCommandCheckResponse(PBYTE     pbyCommand,
@@ -253,7 +272,7 @@ TIMER       gSwitchScanTimer;
                                        by a project define for 5 time periods */
 TIMER       gRecordPeriodTimer;
                                     /* Timer for marker off message */
-TIMER       gMarkerOffTimer;
+TIMER       gMarker1OffTimer;
                                     /* Timer for post trigger timer */
 TIMER       gPostTriggerTimer;
                                     /* Timer for mark on / off */
@@ -274,8 +293,6 @@ BOOL        gbfStartButton = FALSE;
 BOOL        gbfStopButton = FALSE;
                                     /* Flag set TRUE when timer started */
 BOOL        gbfTimerStarted = FALSE;
-                                    /* Flag set TRUE when software delay to send marker off message complete */
-BOOL        gbfMarkerOff = FALSE;
                                     /* Flag set TRUE when post trigger timer is complete */
 BOOL        gbfPostTriggerDone = FALSE;
                                     /* Flag set TRUE when the post trigger timer is running */
@@ -342,23 +359,13 @@ void main(void)
     while (TRUE) {
                                     /* Check to see if the start button has
                                        been pressed */
-        if (gbfStartButton) {
-                                    /* Acknowledge the button press */
-            gbfStartButton = FALSE;
+        if (gbfStartButton)
+        {
                                     /* Stop the post trigger time if running */
             StopTimer(&gPostTriggerTimer);
             gbfPostTriggerTime = FALSE;
-                                    /* Set the LEDs to alternate flashing */
+                                    /* Show to the user that the button press is being processed */
             ANVR_START_LED_ON;
-            SetLedState(&gStartLED,
-                        &GC_FLASH_SENDING,
-                        ANVR_LED_START_MASK,
-                        4UL);
-            ANVR_STOP_LED_OFF;
-            SetLedState(&gStopLED,
-                        &GC_FLASH_SENDING,
-                        ANVR_LED_STOP_MASK,
-                        4UL);
                                     /* Attempt to send the start command */
             if (StartManualRecord())
             {
@@ -372,31 +379,62 @@ void main(void)
 #endif
                gbfTimerStarted = TRUE;
             }
+            else
+            {
+                                    /* Set the LEDs to alternate flashing */
+                SetLedState(&gStartLED,
+                            &GC_FLASH_SENDING,
+                            ANVR_LED_START_MASK,
+                            4UL);
+                SetLedStateAlt(&gStopLED,
+                               &GC_FLASH_SENDING,
+                               ANVR_LED_STOP_MASK,
+                               4UL);
+            }
+                                    /* Acknowledge the button press */
+            gbfStartButton = FALSE;
         }
                                     /* Check to see if the stop button has
                                        been pressed */
         if (gbfStopButton) {
-                                    /* Acknowledge the button press */
-            gbfStopButton = FALSE;
+                                    /* Switch the stop button LED on */
+            ANVR_STOP_LED_ON;
+            ANVR_START_LED_OFF;
                                     /* Always drop a marker when the button is pressed */
-            MarkerOn();
-                                    /* If the post trigger time is not already running */
-            if ((!gbfPostTriggerTime)
-            &&  (gbfTimerStarted))
+            if (RecordIsRuning())
             {
+                TurnLCDOn();
+                DropMarker2();
+                                    /* If the post trigger time is not already running */
+                if ((!gbfPostTriggerTime)
+                &&  (gbfTimerStarted))
+                {
                                     /* Set the LED to show that the 
                                        post record timer has been started */
-                SetLedState(&gStopLED,
-                            &GC_FLASH_POST_TRIGGER,
-                            ANVR_LED_STOP_MASK,
-                            ANV_POST_TRIGGER_TIME / 465);
+                    SetLedState(&gStopLED,
+                                &GC_FLASH_POST_TRIGGER,
+                                ANVR_LED_STOP_MASK,
+                                ANV_POST_TRIGGER_TIME / 465);
                                     /* Start the post trigger timer */
-                StartPostTriggerTimer(ANV_POST_TRIGGER_TIME);
+                    StartPostTriggerTimer(ANV_POST_TRIGGER_TIME);
                                     /* Stop activity on the start LED */
+                    SetLedState(&gStartLED,
+                                &GC_ALWAYS_OFF,
+                                ANVR_LED_START_MASK,
+                                0UL);
+                }
+            }
+            else
+            {
+                                    /* Set the LEDs to alternate flashing */
                 SetLedState(&gStartLED,
-                            &GC_ALWAYS_OFF,
+                            &GC_FLASH_SENDING,
                             ANVR_LED_START_MASK,
-                            0UL);
+                            4UL);
+                SetLedStateAlt(&gStopLED,
+                               &GC_FLASH_SENDING,
+                               ANVR_LED_STOP_MASK,
+                               4UL);
             }
                                     /* Stop the record period timer */
 #ifdef ANVR_RECORD_PERIOD_IN_MS
@@ -407,13 +445,8 @@ void main(void)
                acknowlegde */
             gbfTimerStarted = FALSE;
 #endif
-        }
-        if (gbfMarkerOff)
-        {
-                                    /* Acknowledge the timer flag */
-            gbfMarkerOff = FALSE;
-                                    /* Send the marker off message */
-            MarkerOff();
+                                    /* Acknowledge the button press */
+            gbfStopButton = FALSE;
         }
         if (gbfPostTriggerDone)
         {
@@ -471,21 +504,6 @@ static void SetCancelFlag(void)
 }
 
 /*****************************************************************************
- * Description: Timer call-back function to set the marker off flag
- *
- * Parameters:
- *              N/A
- *
- * Return value: N/A
- *
- *****************************************************************************/
-
-static void SetMarkerOffFlag(void)
-{
-    gbfMarkerOff = TRUE;
-}
-
-/*****************************************************************************
  * Description: Timer call-back function to set the post trigger done flag
  *
  * Parameters:
@@ -536,26 +554,6 @@ static void StartCancelTimer(DWORD dwTimeOut)
                SINGLE_SHOT_TIMER);
     gbfCancel = FALSE;
     set_imask_ccr(FALSE);
-}
-
-/*****************************************************************************
- * Description: Function to start a timer to drop the off marker
- *
- * Parameters:
- *              IN  dwTimeOut - The time period to wait before cancel 
- *
- * Return value: N/A
- *
- *****************************************************************************/
-
-static void StartMarkerOffTimer(DWORD dwTimeOut)
-{
-    gbfMarkerOff = FALSE;
-    StartTimer(&gMarkerOffTimer,
-               (PCFNTMR)SetMarkerOffFlag,
-               PNULL,
-               dwTimeOut,
-               SINGLE_SHOT_TIMER);
 }
 
 /*****************************************************************************
@@ -619,6 +617,34 @@ static BOOL SCI3_SendCommandCheckResponse(PBYTE     pbyCommand,
 }
 
 /*****************************************************************************
+ * Description: Function to switch the LCD on
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: true if the NL-53 is responding to commands
+ *
+ *****************************************************************************/
+
+static BOOL TurnLCDOn(void)
+{
+    /* Turn the LCD on */
+    if (SCI3_SendCommandCheckResponse(gcpbLCDOn,
+                                      sizeof(gcpbLCDOn),
+                                      "R+0000"))
+    {
+        /* Turn the backlight on */
+        if (SCI3_SendCommandCheckResponse(gcpbBacklightOn,
+                                          sizeof(gcpbBacklightOn),
+                                          "R+0000"))
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*****************************************************************************
  * Description: Function to send the menu key-press message
  *
  * Parameters:
@@ -641,6 +667,28 @@ static BOOL SendPauseKeyPress(void)
 }
 
 /*****************************************************************************
+ * Description: Function to check if wave recording is in progress
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: TRUE if recording
+ *
+ *****************************************************************************/
+
+static BOOL RecordIsRuning(void)
+{
+    /* Check to see if recording is stopped */
+    if (SCI3_SendCommandCheckResponse(gcpbyRecCheckMessage,
+                                      sizeof(gcpbyRecCheckMessage),
+                                      "Stop"))
+    {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+/*****************************************************************************
  * Description: Function to start manual recording
  *
  * Parameters:
@@ -659,19 +707,13 @@ static BOOL StartManualRecord_Try(void)
                                       sizeof(gcpbyStoreCheckMessage),
                                       "Start"))
     {
+        /* Switch the LCD on */
+        TurnLCDOn();
         /* Check to see if recording is stopped */
         if (SCI3_SendCommandCheckResponse(gcpbyRecCheckMessage,
                                           sizeof(gcpbyRecCheckMessage),
                                           "Stop"))
         {
-            /* Turn the LCD on */
-            SCI3_SendCommandCheckResponse(gcpbLCDOn,
-                                          sizeof(gcpbLCDOn),
-                                          "R+0000");
-            /* Turn the backlight on */
-            SCI3_SendCommandCheckResponse(gcpbLCDOn,
-                                          sizeof(gcpbLCDOn),
-                                          "R+0000");
             /* Start the recording */
             if (SendPauseKeyPress())
             {
@@ -684,26 +726,14 @@ static BOOL StartManualRecord_Try(void)
         }
         else
         {
-            if (strstr((char*)gpbyResponseBuffer, "Manual"))
-            {
-                /* Manual recording is already in progress */
-                return TRUE;
-            }
-            else
-            {
-                return FALSE;
-            }
+            return TRUE;
         }
-    }
-    else
-    {
-        
     }
     return FALSE;
 }
 
 /*****************************************************************************
- * Description: Function to drop a marker
+ * Description: Function to drop marker 1 on
  *
  * Parameters:
  *              N/A
@@ -712,7 +742,7 @@ static BOOL StartManualRecord_Try(void)
  *
  *****************************************************************************/
 
-static void MarkerOn(void)
+static BOOL Marker1On(void)
 {
     int iCount = ANVR_TRIES;
     while (iCount--)
@@ -722,17 +752,14 @@ static void MarkerOn(void)
                                           sizeof(gcpbyMarker1On),
                                           "R+0000"))
         {
-            break;
+            return TRUE;
         }
     }
-    if (iCount >= 0)
-    {
-        StartMarkerOffTimer(993UL);
-    }
+    return FALSE;
 }
 
 /*****************************************************************************
- * Description: Function to drop a marker
+ * Description: Function to drop marker 1 off
  *
  * Parameters:
  *              N/A
@@ -741,7 +768,7 @@ static void MarkerOn(void)
  *
  *****************************************************************************/
 
-static void MarkerOff(void)
+static void Marker1Off(void)
 {
     int iCount = ANVR_TRIES;
     while (iCount--)
@@ -754,6 +781,90 @@ static void MarkerOff(void)
             break;
         }
     }
+}
+
+/*****************************************************************************
+ * Description: Function to drop marker 2 on
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: none
+ *
+ *****************************************************************************/
+
+static BOOL Marker2On(void)
+{
+    int iCount = ANVR_TRIES;
+    while (iCount--)
+    {
+                            /* Drop a marker */
+        if (SCI3_SendCommandCheckResponse(gcpbyMarker2On,
+                                          sizeof(gcpbyMarker2On),
+                                          "R+0000"))
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*****************************************************************************
+ * Description: Function to drop marker 2 off
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: none
+ *
+ *****************************************************************************/
+
+static void Marker2Off(void)
+{
+    int iCount = ANVR_TRIES;
+    while (iCount--)
+    {
+                            /* Drop a marker */
+        if (SCI3_SendCommandCheckResponse(gcpbyMarker2Off,
+                                          sizeof(gcpbyMarker2Off),
+                                          "R+0000"))
+        {
+            break;
+        }
+    }
+}
+
+/*****************************************************************************
+ * Description: Function to drop marker 2 on and off
+ *
+ * Parameters:
+ *              N/A
+ *
+ * Return value: none
+ *
+ *****************************************************************************/
+
+static void DropMarker2(void)
+{
+    gbfMarkerSleepTimer = FALSE;
+    Marker2On();
+                                    /* Stop activity on the stop LED */
+    SetLedState(&gStopLED,
+                &GC_ALWAYS_OFF,
+                ANVR_LED_STOP_MASK,
+                0UL);
+                                    /* Sleep 1 second */
+    StartTimer(&gPostTriggerTimer,
+               (PCFNTMR)SetSleepFlag,
+               PNULL,
+               993UL,
+               SINGLE_SHOT_TIMER);
+                                    /* Wait for timer to set flag in call-back */
+    while (FALSE == gbfMarkerSleepTimer)
+    {
+        /* Wait here */
+    }
+    Marker2Off();
 }
 
 /*****************************************************************************
@@ -774,7 +885,7 @@ static BOOL StartManualRecord(void)
         if (StartManualRecord_Try())
         {
             gbfMarkerSleepTimer = FALSE;
-            MarkerOn();
+            Marker1On();
                                     /* Stop activity on the stop LED */
             SetLedState(&gStopLED,
                         &GC_ALWAYS_OFF,
@@ -789,18 +900,19 @@ static BOOL StartManualRecord(void)
             StartTimer(&gPostTriggerTimer,
                        (PCFNTMR)SetSleepFlag,
                        PNULL,
-                       1000UL,
+                       993UL,
                        SINGLE_SHOT_TIMER);
+            /* Wait for timer to set flag in call-back */
             while (FALSE == gbfMarkerSleepTimer)
             {
                 /* Wait here */
             }
-            MarkerOff();
+            Marker1Off();
             return TRUE;
         }
     }
                                     /* Drop a marker */
-    MarkerOn();
+    Marker1On();
     return FALSE;
 }
 
@@ -922,6 +1034,32 @@ static void SetLedState(PLEDINFO  pLedInfo,
     pLedInfo->dwRepeat = dwRepeat;
                                     /* Set the LED on */
     SetLedStateOn(pLedInfo);
+}
+
+/*****************************************************************************
+ * Description: Function to control a LED
+ *
+ * Parameters:
+ *              OUT pLedInfo - Pointer to the LED information
+ *              IN  pLedCtl - Pointer to the LED flash control data
+ *              IN  byLED - The LED to control 
+ *              IN  dwRepeat - The number of times to repeat
+ *
+ * Return value: N/A
+ *
+ *****************************************************************************/
+
+static void SetLedStateAlt(PLEDINFO  pLedInfo,
+                           CPLEDCTL  pLedCtl,
+                           BYTE      byLED,
+                           DWORD     dwRepeat)
+{
+                                    /* Set the LED info variables */
+    pLedInfo->pLedCtl = pLedCtl;
+    pLedInfo->byLED = byLED;
+    pLedInfo->dwRepeat = dwRepeat;
+                                    /* Set the LED on */
+    SetLedStateOff(pLedInfo);
 }
 
 /*****************************************************************************
