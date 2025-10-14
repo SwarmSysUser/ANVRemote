@@ -400,23 +400,22 @@ void main(void)
                                     /* Switch the stop button LED on */
             ANVR_STOP_LED_ON;
             ANVR_START_LED_OFF;
-                                    /* Always drop a marker when the button is pressed */
+                                    /* See if the record is running */
             if (RecordIsRuning())
             {
                 TurnLCDOn();
                 DropMarker2();
                                     /* If the post trigger time is not already running */
-                if ((!gbfPostTriggerTime)
-                &&  (gbfTimerStarted))
+                if (!gbfPostTriggerTime)
                 {
+                                    /* Always start a post trigger timer */
+                    StartPostTriggerTimer(ANV_POST_TRIGGER_TIME);
                                     /* Set the LED to show that the 
                                        post record timer has been started */
                     SetLedState(&gStopLED,
                                 &GC_FLASH_POST_TRIGGER,
                                 ANVR_LED_STOP_MASK,
                                 ANV_POST_TRIGGER_TIME / 465);
-                                    /* Start the post trigger timer */
-                    StartPostTriggerTimer(ANV_POST_TRIGGER_TIME);
                                     /* Stop activity on the start LED */
                     SetLedState(&gStartLED,
                                 &GC_ALWAYS_OFF,
@@ -854,7 +853,7 @@ static void DropMarker2(void)
                 ANVR_LED_STOP_MASK,
                 0UL);
                                     /* Sleep 1 second */
-    StartTimer(&gPostTriggerTimer,
+    StartTimer(&gSleepTimer,
                (PCFNTMR)SetSleepFlag,
                PNULL,
                993UL,
@@ -897,7 +896,7 @@ static BOOL StartManualRecord(void)
                         ANVR_LED_START_MASK,
                         (DWORD)-1L);
                                     /* Sleep 1 second */
-            StartTimer(&gPostTriggerTimer,
+            StartTimer(&gSleepTimer,
                        (PCFNTMR)SetSleepFlag,
                        PNULL,
                        993UL,
