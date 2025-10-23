@@ -19,7 +19,7 @@ Record period infinite
 NL-32 = ANVRIT.mot
 NL-52 = ANVRIT.mot
 
-NL-53 Remote V1.0 for H8/3672 NNR-04 with post trigger timer V1.1:
+NL-53 Remote V1.1 for H8/3672 NNR-04 with post trigger timer:
 
 Record period 5 minutes
 NL53R5M.mot
