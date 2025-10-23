@@ -1,7 +1,5 @@
 ANV Remote Handset NRH-1R H8/3672 firmware file details V1.6 and NL-42/52 V1.0:
 
-Experimental: Pins 19 & 20 go high when recording & should go low again at end of time period if meter not connected
-
 Record period 5 minutes
 NL-32 = ANVR5M.mot
 NL-52 = NL52R5M.mot
@@ -21,7 +19,7 @@ Record period infinite
 NL-32 = ANVRIT.mot
 NL-52 = ANVRIT.mot
 
-NL-53 Remote V1.0 for H8/3672 NNR-04 with post trigger timer:
+NL-53 Remote V1.0 for H8/3672 NNR-04 with post trigger timer V1.1:
 
 Record period 5 minutes
 NL53R5M.mot

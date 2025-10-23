@@ -9,9 +9,19 @@
 "EDITOR_WINDOWS_MAXIMISED" "0" 
 [BREAKPOINTS]
 [OPEN_WORKSPACE_FILES]
+"C:\Projects\ANVRemote\ANVRemote\anvremote.h" 
+"C:\projects\ANVRemote\ANVRemote\hwSCI3.h" 
+"C:\Projects\ANVRemote\ANVRemote\hwSCI3_NL53.c" 
+"C:\Projects\ANVRemote\ANVRemote\hwTimer.h" 
+"C:\Projects\ANVRemote\ANVRemote\Main_NA28.c" 
 "C:\Projects\ANVRemote\ANVRemote\Main_NL53.c" 
 [WORKSPACE_FILE_STATES]
+"C:\Projects\ANVRemote\ANVRemote\Main_NA28.c" 0 0 861 721 0 3 
 "C:\Projects\ANVRemote\ANVRemote\Main_NL53.c" 0 0 858 734 0 0 
+"C:\Projects\ANVRemote\ANVRemote\anvremote.h" 857 0 795 721 0 2 
+"C:\Projects\ANVRemote\ANVRemote\hwSCI3_NL53.c" 3 0 856 721 0 4 
+"C:\Projects\ANVRemote\ANVRemote\hwTimer.h" 857 0 795 721 0 1 
+"C:\projects\ANVRemote\ANVRemote\hwSCI3.h" 858 0 794 618 0 5 
 [LOADED_PROJECTS]
 "ANVRemote" 
 [END]
